@@ -324,13 +324,7 @@ function draw() {
   translate(marginleft + 3 * gapX, margintop + gapY);
 
   //ellipse
-  noFill();
-  strokeWeight(1 * pt);
-  stroke(0);
-  ellipse(endX, endY, 2 * mm, 2 * mm);
-  ellipse(startX, startY, 2 * mm, 2 * mm);
-  noStroke();
-  fill(0);
+  
 
   push();
   //horisontal school position
@@ -356,6 +350,7 @@ function draw() {
   translate(0, schoolY * gapY - 0.8 * mm);
   if (schoolY == 14) {
     translate(0, -gapY);
+    endY-=gapY;
   }
   textFont("Dedale", smallKegel, { wght: 700 });
   textLeading(smallLead);
@@ -376,7 +371,11 @@ function draw() {
   } else {
     textAlign(RIGHT, TOP);
     translate(-5.9 * gapX - 1.8 * mm, -0.8 * mm);
+    noFill();
+  
   }
+  
+  fill(0);
   if (schoolY <= 7) {
     textFont("Dedale", mainKegel, { wght: 616 });
     textLeading(mainLead);
@@ -393,6 +392,7 @@ function draw() {
   }
   if (schoolY == textY) {
     translate(0, -gapY);
+    startY-=gapY;
   }
   textFont("Dedale", mainKegel, { wght: 350 });
   textLeading(mainLead);
@@ -426,7 +426,15 @@ function draw() {
   textLeading(mainLead);
   text(t6, 0, lineNum * mainLead, 5.9 * gapX, lines * mainLead);
   pop();
-
+  
+  noFill();
+  strokeWeight(1 * pt);
+  stroke(0);
+  ellipse(endX, endY, 2 * mm, 2 * mm);
+  ellipse(startX, startY, 2 * mm, 2 * mm);
+  noStroke();
+  fill(0);
+  
   strokeWeight(0.6 * pt);
   stroke(0);
   noFill();

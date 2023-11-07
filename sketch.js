@@ -544,7 +544,7 @@ function letterToNumber(letter) {
 }
 let debug = false;
 function keyPressed() {
-  if(key=='d'||key=='D') {
+  if(key=='0') {
   debug = !debug;
 }
 }

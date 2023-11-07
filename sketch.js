@@ -134,7 +134,7 @@ const options = ["Communication", "Design", "Art"];
 
 function preload() {
   bg = loadImage("assets/dna.png");
-  
+
   schoolData = loadTable("assets/allschools.csv", "csv", "header");
 
   myFont = loadFont(
@@ -151,13 +151,12 @@ function setup() {
     (0.94 * min(windowHeight, windowWidth) * 210.0) / 297,
     0.94 * min(windowHeight, windowWidth)
   );
-  mm = height/ 297.0;
+  mm = height / 297.0;
 
   let menuWidth = windowWidth - width - 0.03 * height - 40;
 
   cnv.parent("container");
 
-  
   marginleft = 8 * mm;
   margintop = 7 * mm;
 
@@ -275,10 +274,9 @@ function draw() {
   let startY = textY * gapY + 1 * mm;
   let endX = schoolX * gapX + 1 * mm;
   let endY = schoolY * gapY + 1 * mm;
-  
-  
+
   let totalLines = 9;
-  let t1 = "La Direction de l’école certifie que";
+  let t1 = "La Direction de l’école certifie que";
   let t2 = name.value();
   let t3islong;
   t3islong = false;
@@ -289,7 +287,7 @@ function draw() {
     month.value() +
     " " +
     year.value() +
-    " à " +
+    " à " +
     town.value() +
     "\u00a0(" +
     regNum.value() +
@@ -319,13 +317,12 @@ function draw() {
   let s2 = schoolRow.getString(0);
   let s3 = "Fait à Nancy\nle 20 juin 2024";
   let s4 = "Signature de la direction\net tampon de l’école";
-  let s3height = 250.8 * mm - gapY - margintop - 0.4*mm;
-  let s4height = 276.943*mm - gapY - margintop;
+  let s3height = 250.8 * mm - gapY - margintop - 0.4 * mm;
+  let s4height = 276.943 * mm - gapY - margintop;
 
-  
   //main margin
-  translate(marginleft + 3 * gapX, margintop+gapY);
-  
+  translate(marginleft + 3 * gapX, margintop + gapY);
+
   //ellipse
   noFill();
   strokeWeight(1 * pt);
@@ -334,7 +331,7 @@ function draw() {
   ellipse(startX, startY, 2 * mm, 2 * mm);
   noStroke();
   fill(0);
-  
+
   push();
   //horisontal school position
   translate(schoolX * gapX, 0);
@@ -345,41 +342,29 @@ function draw() {
     textAlign(RIGHT);
     translate(-3.9 * gapX - 1.8 * mm, 0);
   }
-  
+
   //below
   if (schoolY > 7) {
     textFont("Dedale", mainKegel, { wght: 616 });
     textLeading(mainLead);
-    text(
-      s3,
-      0,
-      s3height,
-      3.9 * gapX,
-      2 * mainLead
-    );
+    text(s3, 0, s3height, 3.9 * gapX, 2 * mainLead);
     textFont("Dedale", smallKegel, { wght: 700 });
     textLeading(smallLead);
-    text(
-      s4,
-      0,
-    s4height,
-      3.9*gapX,
-      2*smallLead
-      );
+    text(s4, 0, s4height, 3.9 * gapX, 2 * smallLead);
   }
-  
+
   translate(0, schoolY * gapY - 0.8 * mm);
   if (schoolY == 14) {
     translate(0, -gapY);
   }
   textFont("Dedale", smallKegel, { wght: 700 });
   textLeading(smallLead);
-  text(s1, 0, 0+0.6*mm, 3.9 * gapX, 2 * smallLead);
+  text(s1, 0, 0 + 0.6 * mm, 3.9 * gapX, 2 * smallLead);
   textFont("Dedale", mainKegel, { wght: 616 });
   textLeading(mainLead);
-  text(s2, 0, 2 * smallLead+1.0*mm, 3.9 * gapX, gapY);
+  text(s2, 0, 2 * smallLead + 1.0 * mm, 3.9 * gapX, gapY);
   pop();
-  
+
   //person
   let lines = 1;
   let lineNum = 0;
@@ -395,22 +380,10 @@ function draw() {
   if (schoolY <= 7) {
     textFont("Dedale", mainKegel, { wght: 616 });
     textLeading(mainLead);
-    text(
-      s3,
-      0,
-      s3height,
-      5.9 * gapX,
-      2 * mainLead
-    );
+    text(s3, 0, s3height, 5.9 * gapX, 2 * mainLead);
     textFont("Dedale", smallKegel, { wght: 700 });
     textLeading(smallLead);
-    text(
-      s4,
-      0,
-    s4height,
-      5.9*gapX,
-      2*smallLead
-      );
+    text(s4, 0, s4height, 5.9 * gapX, 2 * smallLead);
   }
   translate(0, textY * gapY);
   if ((textY < 8 && textY > 3) || textY > 11) {
@@ -425,7 +398,7 @@ function draw() {
   textLeading(mainLead);
   text(t1, 0, lineNum, 5.9 * gapX, lines * mainLead);
   lineNum += lines;
-  
+
   textFont("Dedale", mainKegel, { wght: 616 });
   textLeading(mainLead);
   text(t2, 0, lineNum * mainLead, 5.9 * gapX, lines * mainLead);
@@ -457,37 +430,69 @@ function draw() {
   strokeWeight(0.6 * pt);
   stroke(0);
   noFill();
-  
-  let v =  createVector(endX,endY,startX,startY);
-  angleS = (1+letterToNumber(t2.charAt(0)))*sq(1+t2.length);  
-  let plusS = 0;
 
-  if(opt.value()==options[0]) {
-    plusS=PI;
-  } else if (opt.value()==options[1]) {
-    plusS=5/3*PI;
-  }else if (opt.value()==options[2]) {
-    plusS=7/3*PI;
+  let v = createVector(endX, endY, startX, startY);
+  let angleS = 0;
+  for(let j = 0; j<t2.length; j++) {
+   angleS += letterToNumber(t2.charAt(j));
+   
   }
-  angleE = v.heading()+plusS;
-  force = 2*height;
-  if(debug) {
-  stroke(200);
-  for(let i = 0; i < 360; i+=9) {
-    for(let j = 0; j < 360; j+=9) {
-  curve(startX+cos(angleS+radians(i))*force, startY+sin(angleS+radians(i))*force, 
-        startX, startY,
-        endX, endY,
-        endX+cos(angleE+radians(j))*force*0.5, endY+sin(angleE+radians(j))*force*0.5);
-    }
+  let plusS = 0;
+  if (opt.value() == options[0]) {
+    plusS = (PI * 17) / 16;
+  } else if (opt.value() == options[1]) {
+    plusS = ((5 / 3) * PI * 17) / 16;
+  } else if (opt.value() == options[2]) {
+    plusS = ((7 / 3) * PI * 17) / 16;
   }
-}
-  stroke(0);
-  curve(startX+cos(angleS)*force, startY+sin(angleS)*force, 
-        startX, startY,
-        endX, endY,
-       endX+cos(angleE)*force*0.5, endY+sin(angleE)*force*0.5);
+  angleE = v.heading() + plusS;
+  force = 0.1*height;
   
+  stroke(0);
+  let controlStartX;
+  let controlStartY;
+  let controlEndX;
+  let controlEndY;
+  while (force<3*height) {
+
+
+  controlStartX = startX + cos(angleS) * force;
+  controlStartY = startY + sin(angleS) * force;
+  controlEndX = endX + cos(angleE) * force * 0.5;
+  controlEndY = endY + sin(angleE) * force * 0.5;
+  
+  let maxX = -Infinity;
+let minX = Infinity;
+let maxY = -Infinity;
+let minY = Infinity;
+  for (let t = 0; t <= 1; t += 0.01) {
+  // Use the Catmull-Rom spline equation to calculate the coordinates
+  let x = catmullRomX(controlStartX, startX, endX, controlEndX, t);
+  let y = catmullRomY(controlStartY, startY, endY, controlEndY, t);
+
+  // Update the maximum and minimum x and y values
+  maxX = max(maxX, x);
+  minX = min(minX, x);
+  maxY = max(maxY, y);
+  minY = min(minY, y);
+  }
+if(minX<=-2.5*gapX||maxX>=8.5*gapX||minY<=-0.5*gapY||maxY>=14*gapY) {
+  break;
+}
+    force+=height*0.1;
+  }
+  
+  curve(
+    controlStartX,
+    controlStartY,
+    startX,
+    startY,
+    endX,
+    endY,
+    controlEndX,
+    controlEndY
+  );
+
   if (pdfprint) {
     pdf.save();
     pdfprint = false;
@@ -496,6 +501,25 @@ function draw() {
 
 function readyToPrint() {
   pdfprint = true;
+}
+
+
+function catmullRomX(p0, p1, p2, p3, t) {
+  return 0.5 * (
+    (-p0 + 3 * p1 - 3 * p2 + p3) * (t * t * t) +
+    (2 * p0 - 5 * p1 + 4 * p2 - p3) * (t * t) +
+    (-p0 + p2) * t +
+    2 * p1
+  );
+}
+
+function catmullRomY(p0, p1, p2, p3, t) {
+  return 0.5 * (
+    (-p0 + 3 * p1 - 3 * p2 + p3) * (t * t * t) +
+    (2 * p0 - 5 * p1 + 4 * p2 - p3) * (t * t) +
+    (-p0 + p2) * t +
+    2 * p1
+  );
 }
 
 function decimalToDMS(latitude, longitude) {
@@ -536,15 +560,10 @@ function letterToNumber(letter) {
     letter = letter.toUpperCase();
 
     // Subtract the ASCII value of 'A' to get the position in the alphabet (0-based)
-    return letter.charCodeAt(0) - 'A'.charCodeAt(0);
+    return letter.charCodeAt(0) - "A".charCodeAt(0);
   } else {
     // Handle non-letter characters, e.g., return -1 or an error code
     return -1;
   }
 }
-let debug = false;
-function keyPressed() {
-  if(key=='0') {
-  debug = !debug;
-}
-}
+

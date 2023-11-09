@@ -2,7 +2,9 @@ var pdf;
 var myFont;
 var cnv;
 let schoolX, schoolY, textX, textY;
-let name, school, town, regNum, opt, day, month, year;
+let slider;
+let multipleforce;
+let name, school, town, opt, day, month, year;
 let bg;
 let pg;
 var but;
@@ -13,109 +15,9 @@ let schoolData;
 let amount;
 let mainKegel, mainLead, smallKegel, smallLead;
 let bottomM, topM, leftP, rightP;
-const regions = [
-  "01",
-  "02",
-  "03",
-  "04",
-  "05",
-  "06",
-  "07",
-  "08",
-  "09",
-  "10",
-  "11",
-  "12",
-  "13",
-  "14",
-  "15",
-  "16",
-  "17",
-  "18",
-  "19",
-  "2A",
-  "2B",
-  "21",
-  "22",
-  "23",
-  "24",
-  "25",
-  "26",
-  "27",
-  "28",
-  "29",
-  "30",
-  "31",
-  "32",
-  "33",
-  "34",
-  "35",
-  "36",
-  "37",
-  "38",
-  "39",
-  "40",
-  "41",
-  "42",
-  "43",
-  "44",
-  "45",
-  "46",
-  "47",
-  "48",
-  "49",
-  "50",
-  "51",
-  "52",
-  "53",
-  "54",
-  "55",
-  "56",
-  "57",
-  "58",
-  "59",
-  "60",
-  "61",
-  "62",
-  "63",
-  "64",
-  "65",
-  "66",
-  "67",
-  "68",
-  "69",
-  "70",
-  "71",
-  "72",
-  "73",
-  "74",
-  "75",
-  "76",
-  "77",
-  "78",
-  "79",
-  "80",
-  "81",
-  "82",
-  "83",
-  "84",
-  "85",
-  "86",
-  "87",
-  "88",
-  "89",
-  "90",
-  "91",
-  "92",
-  "93",
-  "94",
-  "95",
-  "971",
-  "972",
-  "973",
-  "974",
-  "976",
-];
+let regular, bold;
+let tAlign, sAlign;
+
 const months = [
   "janvier",
   "février",
@@ -136,10 +38,11 @@ function preload() {
   bg = loadImage("assets/dna.png");
 
   schoolData = loadTable("assets/allschools.csv", "csv", "header");
-
+  regular = loadFont("fonts/Dedale-Regular.otf");
+  bold = loadFont("fonts/Dedale-Bold.otf");
   myFont = loadFont(
     "fonts/DedaleVAR.ttf",
-    () => {},
+    () => {wght: [616]},
     () => {},
     "Dedale"
   );
@@ -149,11 +52,12 @@ function setup() {
   amount = schoolData.getRowCount() - 2;
   cnv = createCanvas(
     (0.94 * min(windowHeight, windowWidth) * 210.0) / 297,
-    0.94 * min(windowHeight, windowWidth)
+    0.94 * min(windowHeight, windowWidth),
+    SVG
   );
   mm = height / 297.0;
 
-  let menuWidth = windowWidth - width - 0.03 * height - 40;
+  let menuWidth = 400;
 
   cnv.parent("container");
 
@@ -176,15 +80,7 @@ function setup() {
   for (let j = 0; j < amount; j++) {
     school.option(schoolData.getString(j, 0));
   }
-
-  regNum = createSelect();
-  regNum.position(width + 0.03 * height + 20, 110);
-  for (let j = 0; j < regions.length; j++) {
-    regNum.option(regions[j]);
-  }
-  regNum.style("width", "70px");
-  regNum.value("51");
-
+  
   day = createInput();
   day.position(width + 0.03 * height + 20, 74);
   day.style("width", "30px");
@@ -203,10 +99,10 @@ function setup() {
   year.value("2002");
 
   town = createInput();
-  town.value("Saint-Remy-en-Bouzemont-Saint-Genest-et-Isson");
+  town.value("Nancy");
   town.position(width + 0.03 * height + 20, 114);
-  town.style("margin-left", "75px");
-  town.style("width", String(int(0.4 * windowWidth - 84) + "px"));
+  //town.style("margin-left", "75px");
+  town.style("width", menuWidth + "px");
 
   opt = createSelect();
   opt.position(width + 0.03 * height + 20, 190);
@@ -215,6 +111,10 @@ function setup() {
   }
   opt.style("width", menuWidth + "px");
   opt.value(options[1]);
+  
+  slider = createSlider(1, 10, 10, 0.1);
+  slider.position(width + 0.03 * height + 20, 280);
+  slider.style('width', menuWidth + "px");
 
   //calculating area:
   bottomM = schoolData.getNum(0, 1);
@@ -242,19 +142,22 @@ function setup() {
 }
 
 function draw() {
+  clear();
   if (pdfprint) {
     pdf = createPDF();
     pdf.beginRecord();
+    
     background(255);
-    myFont = loadFont(
-      "fonts/DedaleVAR.ttf",
-      () => {},
-      () => {},
-      "Dedale"
-    );
+    // myFont = loadFont(
+    //   "fonts/DedaleVAR.ttf",
+    //   () => {},
+    //   () => {},
+    //   "Dedale"
+    // );
   } else {
     image(bg, 0, 0, width, height);
   }
+  
   pt = 0.353 * mm;
   (mainKegel = 10), 3 * pt;
   (mainLead = 12), 64 * pt;
@@ -263,7 +166,8 @@ function draw() {
   let gapX = 16 * mm;
   let gapY = 15.611 * mm;
   fill("#000000");
-
+  noStroke();
+  
   let schoolRow = schoolData.findRow(school.value(), "Nom");
 
   schoolX = int(map(schoolRow.getNum(2), leftP, rightP, 0, 8));
@@ -276,7 +180,7 @@ function draw() {
   let endY = schoolY * gapY + 1 * mm;
 
   let totalLines = 9;
-  let t1 = "La Direction de l’école certifie que";
+  let t1 = "La Direction de l’école certifie que";
   let t2 = name.value();
   let t3islong;
   t3islong = false;
@@ -287,13 +191,9 @@ function draw() {
     month.value() +
     " " +
     year.value() +
-    " à " +
-    town.value() +
-    "\u00a0(" +
-    regNum.value() +
-    ")";
-  textFont("Dedale", mainKegel, { wght: 350 });
-  textLeading(mainLead);
+    " à " +
+    town.value();
+  
   if (textWidth(t3) > 5.9 * gapX) {
     for (let j = t3.length; j >= 0; j--) {
       if (t3.charAt(j) == "-") {
@@ -330,20 +230,21 @@ function draw() {
   //horisontal school position
   translate(schoolX * gapX, 0);
   if (schoolX < 5) {
-    textAlign(LEFT);
+    tAlign = LEFT;
     translate(3.8 * mm, 0);
   } else {
-    textAlign(RIGHT);
+    tAlign = RIGHT;
     translate(-3.9 * gapX - 1.8 * mm, 0);
   }
 
   //below
   if (schoolY > 7) {
-    textFont("Dedale", mainKegel, { wght: 616 });
+    textFont(bold);textSize(mainKegel);
     textLeading(mainLead);
+    textAlign(tAlign, TOP);
     text(s3, 0, s3height, 3.9 * gapX, 2 * mainLead);
-    textFont("Dedale", smallKegel, { wght: 700 });
-    textLeading(smallLead);
+    textFont(bold);textSize(smallKegel);
+    textLeading(smallLead);textAlign(tAlign, TOP);
     text(s4, 0, s4height, 3.9 * gapX, 2 * smallLead);
   }
 
@@ -352,12 +253,14 @@ function draw() {
     translate(0, -gapY);
     endY-=gapY;
   }
-  textFont("Dedale", smallKegel, { wght: 700 });
+  textFont(bold);textSize(smallKegel);
   textLeading(smallLead);
-  text(s1, 0, 0 + 0.6 * mm, 3.9 * gapX, 2 * smallLead);
-  textFont("Dedale", mainKegel, { wght: 616 });
+  textAlign(tAlign, TOP);
+  text(s1, 0, 0 + 0.0 * mm, 3.9 * gapX, 2 * smallLead);
+  textFont(bold);textSize(mainKegel);
   textLeading(mainLead);
-  text(s2, 0, 2 * smallLead + 1.0 * mm, 3.9 * gapX, gapY);
+  textAlign(tAlign, TOP);
+  text(s2, 0, 2 * smallLead + 0.0 * mm, 3.9 * gapX, gapY);
   pop();
 
   //person
@@ -366,10 +269,10 @@ function draw() {
   push();
   translate(textX * gapX, 0);
   if (textX < 4) {
-    textAlign(LEFT, TOP);
+    sAlign = LEFT;
     translate(3.8 * mm, -0.8 * mm);
   } else {
-    textAlign(RIGHT, TOP);
+    sAlign = RIGHT;
     translate(-5.9 * gapX - 1.8 * mm, -0.8 * mm);
     noFill();
   
@@ -377,14 +280,16 @@ function draw() {
   
   fill(0);
   if (schoolY <= 7) {
-    textFont("Dedale", mainKegel, { wght: 616 });
+    textFont(bold);textSize(mainKegel);
     textLeading(mainLead);
+    textAlign(sAlign, TOP);
     text(s3, 0, s3height, 5.9 * gapX, 2 * mainLead);
-    textFont("Dedale", smallKegel, { wght: 700 });
+    textFont(bold);textSize(smallKegel);
     textLeading(smallLead);
+    textAlign(sAlign, TOP);
     text(s4, 0, s4height, 5.9 * gapX, 2 * smallLead);
   }
-  translate(0, textY * gapY);
+  translate(0, textY * gapY-0.6*mm);
   if ((textY < 8 && textY > 3) || textY > 11) {
     //translate(0,(1-totalLines)*mainLead);
     translate(0, -3 * gapY);
@@ -394,17 +299,20 @@ function draw() {
     translate(0, -gapY);
     startY-=gapY;
   }
-  textFont("Dedale", mainKegel, { wght: 350 });
+  textFont(regular);textSize(mainKegel);
   textLeading(mainLead);
+  textAlign(sAlign, TOP);
   text(t1, 0, lineNum, 5.9 * gapX, lines * mainLead);
   lineNum += lines;
 
-  textFont("Dedale", mainKegel, { wght: 616 });
+  textFont(bold);textSize(mainKegel);
   textLeading(mainLead);
+  textAlign(sAlign, TOP);
   text(t2, 0, lineNum * mainLead, 5.9 * gapX, lines * mainLead);
   lineNum += lines;
-  textFont("Dedale", mainKegel, { wght: 350 });
+  textFont(regular);textSize(mainKegel);
   textLeading(mainLead);
+  textAlign(sAlign, TOP);
   if (!t3islong) {
     lines = 3;
   } else {
@@ -413,31 +321,34 @@ function draw() {
   text(t3, 0, lineNum * mainLead, 5.9 * gapX, lines * mainLead);
   lineNum += lines;
   lines = 2;
-  textFont("Dedale", mainKegel, { wght: 616 });
+  textFont(bold);textSize(mainKegel);
   textLeading(mainLead);
+  textAlign(sAlign, TOP);
   text(t4, 0, lineNum * mainLead, 5.9 * gapX, lines * mainLead);
   lineNum += lines;
   lines = 1;
-  textFont("Dedale", mainKegel, { wght: 350 });
+  textFont(regular);textSize(mainKegel);
   textLeading(mainLead);
+  textAlign(sAlign, TOP);
   text(t5, 0, lineNum * mainLead, 5.9 * gapX, lines * mainLead);
   lineNum += lines;
-  textFont("Dedale", mainKegel, { wght: 616 });
+  textFont(bold);textSize(mainKegel);
   textLeading(mainLead);
+  textAlign(sAlign, TOP);
   text(t6, 0, lineNum * mainLead, 5.9 * gapX, lines * mainLead);
   pop();
   
   noFill();
-  strokeWeight(1 * pt);
   stroke(0);
+  strokeWeight(1 * pt);
+  
   ellipse(endX, endY, 2 * mm, 2 * mm);
   ellipse(startX, startY, 2 * mm, 2 * mm);
-  noStroke();
-  fill(0);
+  
   
   strokeWeight(0.6 * pt);
-  stroke(0);
-  noFill();
+  
+
 
   let v = createVector(endX, endY, startX, startY);
   let angleS = 0;
@@ -456,12 +367,12 @@ function draw() {
   angleE = v.heading() + plusS;
   force = 0.1*height;
   
-  stroke(0);
+  
   let controlStartX;
   let controlStartY;
   let controlEndX;
   let controlEndY;
-  while (force<3*height) {
+  while (force<slider.value()*height) {
 
 
   controlStartX = startX + cos(angleS) * force;
@@ -568,7 +479,7 @@ function letterToNumber(letter) {
     letter = letter.toUpperCase();
 
     // Subtract the ASCII value of 'A' to get the position in the alphabet (0-based)
-    return letter.charCodeAt(0) - "A".charCodeAt(0);
+    return letter.charCodeAt(0) - "A".charCodeAt(0) + 1;
   } else {
     // Handle non-letter characters, e.g., return -1 or an error code
     return -1;
